@@ -1,1 +1,77 @@
+Basic Queries :::::::::
 
+SHOW DATABASES;
+
+
+USE practice;
+
+SHOW TABLES;
+
+DESCRIBE countries;
+
+CREATE TABLE IF NOT EXISTS employee(
+employee_id DECIMAL(6,0) NOT NULL PRIMARY KEY,
+first_name VARCHAR(20) DEFAULT NULL,
+last_name VARCHAR(20) NOT NULL,
+job_ID VARCHAR(10) NOT NULL,
+salary DECIMAL(6,0) DEFAULT NULL,
+FOREIGN KEY(job_ID) REFERENCES jobs(job_ID)
+##ON DELETE CASCADE ON UPDATE RESTRICT 
+##ON DELETE SET NULL  ## can contain only those values which are exists in the jobs table.
+##ON UPDATE SET NULL  ## can contain only those values which are exists in the jobs table.
+ON DELETE NO ACTION
+ON UPDATE NO ACTION
+);
+
+DESCRIBE employee;
+
+CREATE TABLE IF NOT EXISTS countries(
+name VARCHAR(20) NOT NULL,
+country_id VARCHAR(10) NOT NULL PRIMARY KEY,
+region_id DECIMAL(4,0) NOT NULL
+);
+
+DESCRIBE country_new2;
+SHOW TABLES;
+
+ALTER TABLE countries
+RENAME country_new2;
+
+ALTER TABLE country_new2
+ADD COLUMN Address VARCHAR(20);
+
+ALTER TABLE country_new2
+ADD COLUMN ID INT FIRST;
+
+ALTER TABLE country_new2
+ADD COLUMN PM_of_country VARCHAR(10) AFTER name;
+
+ALTER TABLE country_new2
+CHANGE COLUMN country_id country_id DECIMAL(4,0);
+ ## SECOND METHOD
+ 
+ALTER TABLE country_new2
+MODIFY COLUMN region_id VARCHAR(10);
+
+
+ALTER TABLE country_new2
+DROP COLUMN PM_of_country;
+
+ALTER TABLE country_new2
+CHANGE COLUMN Address country_address VARCHAR(20);
+
+
+ALTER TABLE country_new2
+DROP PRIMARY KEY;
+
+ALTER TABLE country_new2
+ADD PRIMARY KEY(country_id);
+
+ALTER TABLE country_new2
+DROP PRIMARY KEY;
+
+ALTER TABLE country_new2
+ADD PRIMARY KEY(country_id,region_id);
+
+ALTER TABLE country_new2
+ADD FOREIGN KEY (country_id) REFERENCES employee(employee_id);
