@@ -1,1 +1,181 @@
+##Subqueries 
+
+##Write a MySQL query to find the name (first_name, last_name) and the salary of the employees who have a higher salary than the employee whose last_name='Bull'.
+SELECT first_name AS 'First Name', last_name AS 'Last Name', salary
+FROM 
+	employee_new
+WHERE 
+	salary > (SELECT salary FROM employee_new WHERE last_name = 'Bull');
+    
+##Write a MySQL query to find the name (first_name, last_name) of all employees who works in the IT department.
+
+SELECT first_name AS 'First Name', last_name AS 'Last Name'
+FROM
+	employee_new
+WHERE 
+	department_id IN (SELECT department_id FROM department_new WHERE department_name = 'IT');
+    
+##Write a MySQL query to find the name (first_name, last_name) of the employees who have a manager and worked in a USA based department.
+SELECT first_name,last_name 
+FROM
+	employee_new
+WHERE
+	manager_id
+IN
+	(SELECT employee_id 
+	FROM employee_new
+    WHERE department_id
+    IN 
+		(SELECT department_id
+        FROM department_new
+        WHERE location_id
+		IN
+			(SELECT location_id
+			FROM locations
+            WHERE country_id = 'US')
+		)
+	);
+
+
+##Write a MySQL query to find the name (first_name, last_name) of the employees who are managers.
+SELECT first_name, last_name
+FROM employee_new
+WHERE (employee_id IN (SELECT manager_id FROM employee_new));
+
+##Write a MySQL query to find the name (first_name, last_name), and salary of the employees whose salary is greater than the average salary.
+SELECT first_name AS 'First Name', last_name AS 'Last Name', salary
+FROM employee_new
+WHERE salary > (SELECT AVG(salary) FROM employee_new);
+
+
+##Write a MySQL query to find the name (first_name, last_name), and salary of the employees whose salary is equal to the minimum salary for their job grade.
+SELECT first_name AS 'First Name', last_name AS 'Last Name', salary
+FROM employee_new
+WHERE employee_new.salary = 
+	(SELECT min_salary FROM jobs WHERE employee_new.job_id = jobs.job_id);
+
+##Write a MySQL query to find the name (first_name, last_name), and salary of the employees who earns more than the average salary and works in any of the IT departments.
+SELECT first_name AS 'First Name', last_name AS 'Last Name', salary
+FROM employee_new
+WHERE department_id IN
+	(SELECT department_id FROM department_new WHERE department_name LIKE 'IT%')
+AND salary > 
+	(SELECT AVG(salary) FROM employee_new);
+    
+    
+    
+##Write a MySQL query to find the name (first_name, last_name), and salary of the employees who earns more than the earning of Mr. Bell.
+SELECT first_name AS 'First Name', last_name AS 'Last Name', salary
+FROM employee_new
+WHERE salary > (SELECT salary FROM employee_new WHERE last_name = 'Bell')
+ORDER BY first_name;
+
+
+##Write a MySQL query to find the name (first_name, last_name), and salary of the employees who earn the same salary as the minimum salary for all departments.
+SELECT *
+FROM employee_new 
+WHERE salary = (SELECT MIN(salary) FROM employee_new);
+
+
+##Write a MySQL query to find the name (first_name, last_name), and salary of the employees whose salary is greater than the average salary of each department.
+SELECT *
+FROM employee_new
+WHERE salary > 
+(SELECT *
+FROM employee_new
+WHERE salary > ALL(SELECT AVG(salary) FROM employee_new GROUP BY department_id));
+
+
+
+##Write a MySQL query to find the name (first_name, last_name) and salary of the employees who earn a salary that is higher than the salary of all the Shipping Clerk (JOB_ID = 'SH_CLERK'). Sort the results of the salary of the lowest to highest.
+SELECT first_name, last_name, salary, job_id
+FROM employee_new
+WHERE salary > ALL (SELECT salary FROM employee_new WHERE job_id = 'SH_CLERK')
+ORDER BY salary;
+
+##Write a MySQL query to find the name (first_name, last_name) of the employees who are not supervisors.
+SELECT b.first_name, b.last_name
+FROM employee_new b
+WHERE NOT EXISTS
+	(SELECT 'X' FROM employee_new a WHERE a.manager_id = b.employee_id);
+    
+##Write a MySQL query to display the employee ID, first name, last name, and department names of all employees.
+SELECT first_name AS 'First Name', last_name AS 'Last Name' , employee_id ,
+(SELECT department_name FROM department_new d
+WHERE e.department_id = d.department_id) department
+FROM employee_new e
+ORDER BY department;
+
+##Write a MySQL query to display the employee ID, first name, last name, salary of all employees whose salary is above average for their departments.
+SELECT employee_id, first_name, last_name
+FROM employee_new AS A
+WHERE salary > 
+	(SELECT AVG(salary) FROM employee_new WHERE department_id = A.department_id);
+    
+##Write a MySQL query to fetch even numbered records from employees table.
+SET @i = 0;
+SELECT i, employee_id
+FROM (SELECT @i := @i + 1 AS i, employee_id FROM employee_new) a
+WHERE MOD(a.i, 2) = 0;
+
+
+##Write a MySQL query to find the 5th maximum salary in the employees table.
+SELECT DISTINCT salary
+FROM employee_new e1
+WHERE 5 = (SELECT COUNT(DISTINCT salary)
+FROM employee_new e2
+WHERE e2.salary >= e1.salary);
+
+##Write a MySQL query to find the 4th minimum salary in the employees table.
+SELECT DISTINCT salary
+FROM employee_new e1
+WHERE 4 = (SELECT COUNT(DISTINCT salary)
+FROM employee_new e2
+WHERE e2.salary <= e1.salary);
+
+##Write a MySQL query to select last 10 records from a table.
+SELECT * FROM (SELECT * FROM employee_new ORDER BY employee_id DESC LIMIT 10) sub
+ORDER BY employee_id ASC;
+
+##Write a MySQL query to list the department ID and name of all the departments where no employee is working.
+SELECT * 
+FROM department_new
+WHERE department_id 
+NOT IN 
+	(SELECT department_id FROM employee_new);
+    
+## Write a MySQL query to get 3 maximum salaries.
+SELECT DISTINCT salary
+FROM employee_new a
+WHERE 3 >= (
+    SELECT COUNT(DISTINCT salary)
+    FROM employee_new b
+    WHERE b.salary >= a.salary
+)
+ORDER BY a.salary DESC;
+
+##Write a MySQL query to get 3 minimum salaries.
+SELECT DISTINCT salary
+FROM employee_new a
+WHERE 3 >= (
+    SELECT COUNT(DISTINCT salary)
+    FROM employee_new b
+    WHERE b.salary <= a.salary
+)
+ORDER BY a.salary DESC;
+
+##Write a MySQL query to get nth max salaries of employees.
+SELECT DISTINCT salary
+FROM employee_new a
+WHERE (SELECT COUNT(DISTINCT salary) 
+       FROM employee_new b 
+       WHERE b.salary > a.salary) = N-1;
+
+SELECT *
+FROM employees emp1
+WHERE (1) = (
+    SELECT COUNT(DISTINCT(emp2.salary))
+    FROM employees emp2
+    WHERE emp2.salary > emp1.salary
+);
 
