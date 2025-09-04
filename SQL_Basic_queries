@@ -75,3 +75,7 @@ ADD PRIMARY KEY(country_id,region_id);
 
 ALTER TABLE country_new2
 ADD FOREIGN KEY (country_id) REFERENCES employee(employee_id);
+
+
+
+
