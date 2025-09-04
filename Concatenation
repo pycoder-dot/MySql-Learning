@@ -1,0 +1,45 @@
+##Write a MySQL query to get the job_id and related employee's id.
+SELECT job_id, GROUP_CONCAT(employee_id, ' ') AS 'Employees ID'
+FROM employee_new
+GROUP BY job_id;
+
+
+##Write a MySQL query to update the portion of the phone_number in the employees table, within the  phone number the substring '124' will be replaced by '999'.
+UPDATE employee_new
+SET phone_number = REPLACE(phone_number, '124', '999')
+WHERE phone_number LIKE '%124%';
+
+SELECT * FROM employee_new
+WHERE phone_number LIKE '%999%';
+
+##for unlock the tables to update
+SET SQL_SAFE_UPDATES = 0;
+
+
+##Write a MySQL query to get the details of the employees where the length of the first name greater than or equal to 8.
+SELECT * FROM employee_new
+WHERE LENGTH(first_name) >= 8;
+
+##Write a MySQL query to display leading zeros before maximum and minimum salary.
+SELECT job_id, 
+LPAD(max_salary, 7, '0') AS ' Max Salary',
+LPAD(min_salary, 7, '0') AS ' Min Salary'
+FROM
+jobs;
+
+##Write a MySQL query to append '@example.com' to email field.
+UPDATE employee_new
+SET email = CONCAT(email, '@example.com');
+
+
+SELECT * FROM employee_new;
+
+## Write a MySQL query to get the employee id, first name and hire month.
+SELECT employee_id, first_name,
+MID(hire_date, 6, 2) AS hire_math
+FROM employee_new;
+
+##Write a MySQL query to get the employee id, email id (discard the last three characters).
+SELECT employee_id,
+REVERSE(SUBSTR(REVERSE(email), 4)) AS Email_ID
+FROM employee_new;
